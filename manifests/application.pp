@@ -14,8 +14,13 @@ define play::application(
     ensure   => 'present',
     url      => $source,
     target   => $path,
-    owner    => 'play',
-    group    => 'play',
+  }
+
+  file { $path :
+    ensure  => 'directory',
+    recurse => 'true',
+    owner   => 'play',
+    group   => 'play',
   }
 
 }
