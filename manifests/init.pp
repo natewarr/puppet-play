@@ -31,32 +31,32 @@ class play (
     group    => "${group}",
     mode     => 0550,
   }
-  file { "play-apps":
-    path     => "${homepath}/play-apps",
+  file { "apps":
+    path     => "${homepath}/apps",
     ensure   => "directory",
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
     mode     => 0550,
   }
-  file { "play-conf":
-    path     => "${homepath}/play-conf",
+  file { "conf":
+    path     => "${homepath}/conf",
     ensure   => "directory",
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
     mode     => 0550,
   }
-  file { "play-logs":
-    path     => "${homepath}/play-logs",
+  file { "logs":
+    path     => "${homepath}/logs",
     ensure   => "directory",
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
     mode     => 0770,
   }
-  file { "play-pids":
-    path     => "${homepath}/play-pids",
+  file { "pids":
+    path     => "${homepath}/pids",
     ensure   => "directory",
     owner    => "${owner}",
     group    => "${group}",
@@ -64,12 +64,12 @@ class play (
     mode     => 0770,
   }
 
-  file { "play-logback-conf":
-    path     => "${homepath}/play-conf/logger-conf.xml",
+  file { "logback-conf":
+    path     => "${homepath}/conf/logger-conf.xml",
     ensure   => "file",
     owner    => "${owner}",
     group    => "${group}",
-    require  => File['play-conf'],
+    require  => File['conf'],
     mode     => 0550,
     source   => "puppet:///modules/play/logger-conf.xml",
   }
