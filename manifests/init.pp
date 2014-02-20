@@ -63,14 +63,6 @@ class play (
     require  => File['playappdir'],
     mode     => 0770,
   }
-  file { "play-scripts":
-    path     => "${homepath}/scripts",
-    ensure   => "directory",
-    owner    => "${owner}",
-    group    => "${group}",
-    require  => File['playappdir'],
-    mode     => 0550,
-  }
 
   file { "play-logback-conf":
     path     => "${homepath}/play-conf/logger-conf.xml",
@@ -81,15 +73,4 @@ class play (
     mode     => 0550,
     source   => "puppet:///modules/play/logger-conf.xml",
   }
-
-  # file { "play-control-script":
-  # path     => "${homepath}/scripts/playcontrol.sh",
-  # ensure   => "file",
-  # owner    => "${owner}",
-  # group    => "${group}",
-  # require  => File['play-scripts'],
-  # mode     => 0550,
-  # content  => template("play_fw_control/playcontrol.erb"),
-  #}
 }
-
