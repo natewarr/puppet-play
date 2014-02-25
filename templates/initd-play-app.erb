@@ -1,0 +1,135 @@
+#!/bin/sh
+#
+# Play application control script - <%= @service_name %>
+#
+# chkconfig: - 80 20
+# description: Play application <%= @service_name %>
+# pidfile: <%= @path %>/pids/<%= @service_name %>
+
+#This file is managed by puppet. Do not attempt to edit on server.
+#
+
+
+RELATIVE_PATH="<%= @path %>"
+SERVICE_NAME="<%= @service_name %>"
+APP_NAME="<%= @app_name %>"
+APP_VERSION="<%= @version %>"
+LISTEN_PORT="<%= @port %>"
+ADDL_PARAMS="<%= @exec_params %>"
+USER="play"
+CONFIG_FILE="${RELATIVE_PATH}/conf/${SERVICE_NAME}.conf"
+LOGGER_CONF_FILE="${RELATIVE_PATH}/conf/logger-conf.xml"
+LOGGER_FILEPATH="${RELATIVE_PATH}/logs/${SERVICE_NAME}"
+PID_FILE="${RELATIVE_PATH}/pids/${SERVICE_NAME}.pid"
+APPLICATION_PATH="${RELATIVE_PATH}/apps/${APP_NAME}-${APP_VERSION}"
+START_LOG="${RELATIVE_PATH}/logs/${SERVICE_NAME}/startup.log"
+
+# Source function library.
+. /etc/init.d/functions
+
+start() {
+  echo -n "Starting $SERVICE_NAME "
+  if [ -f $PID_FILE ]; then
+    read ppid < $PID_FILE
+    if [ `ps --pid $ppid 2> /dev/null | grep -c $ppid 2> /dev/null` -eq '1' ]; then
+      failure
+      echo
+      echo "$SERVICE_NAME is already running."
+      return 1
+    else
+      rm -f $PID_FILE
+    fi
+  fi
+
+  if [ ! -f $CONFIG_FILE ]; then
+    echo "Missing configuration file: $CONFIG_FILE"
+    exit 1
+  fi
+
+  mkdir -p $(dirname $LOGGER_FILEPATH)
+  chown $USER $(dirname $LOGGER_FILEPATH) || true
+
+  rm -f $START_LOG
+
+  if [ -r /etc/rc.d/init.d/functions ]; then
+    daemon --user $USER ${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${EXTRA_ARGS[*]} 2>&1 > $START_LOG &
+  else
+    su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${EXTRA_ARGS[*]}" 2>&1 > $START_LOG &
+  fi
+
+  while true
+  do
+    [ -f $START_LOG ] && break
+    sleep 2
+  done
+
+
+  success
+  echo
+  echo $(cat $START_LOG)
+  return 0
+}
+
+stop() {
+  echo -n "Stopping $SERVICE_NAME "
+
+  if [ -f $PID_FILE ]; then
+    read kpid < $PID_FILE
+    let kwait=30
+    let count=0
+    # Try issuing SIGTERM
+
+    kill -15 $kpid
+    until [ `ps --pid $kpid 2> /dev/null | grep -c $kpid 2> /dev/null` -eq '0' ] || [ $count -gt $kwait ]
+    do
+      sleep 1
+      let count=$count+1;
+    done
+
+    if [ $count -gt $kwait ]; then
+      kill -9 $kpid
+    fi
+  fi
+
+  rm -f $PID_FILE
+  success
+  echo
+}
+
+status() {
+  if [ -f $PID_FILE ]; then
+    read ppid < $PID_FILE
+    if [ `ps --pid $ppid 2> /dev/null | grep -c $ppid 2> /dev/null` -eq '1' ]; then
+      echo "$SERVICE_NAME is running (pid $ppid)"
+      return 0
+    else
+      return 1
+    fi
+  fi
+
+  echo "$SERVICE_NAME is not running"
+  exit 3
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    echo "Restarting Application ..."
+    $0 stop
+    $0 start
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    echo
+    exit 1
+  ;;
+esac
+exit 0

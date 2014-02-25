@@ -29,7 +29,7 @@ class play (
     ensure   => "directory",
     owner    => "${owner}",
     group    => "${group}",
-    mode     => 0550,
+    mode     => 0775,
   }
   file { "apps":
     path     => "${homepath}/apps",
@@ -37,7 +37,7 @@ class play (
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
-    mode     => 0550,
+    mode     => 0775,
   }
   file { "conf":
     path     => "${homepath}/conf",
@@ -45,7 +45,7 @@ class play (
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
-    mode     => 0550,
+    mode     => 0775,
   }
   file { "logs":
     path     => "${homepath}/logs",
@@ -53,15 +53,21 @@ class play (
     owner    => "${owner}",
     group    => "${group}",
     require  => File['playappdir'],
-    mode     => 0770,
+    mode     => 0775,
   }
   file { "pids":
     path     => "${homepath}/pids",
     ensure   => "directory",
-    owner    => "${owner}",
-    group    => "${group}",
+    owner    => $owner,
+    group    => $group,
     require  => File['playappdir'],
-    mode     => 0770,
+    mode     => 0775,
+  }
+  file { [ "${homepath}/cache", "${homepath}/cache/zip"] :
+    ensure => "directory",
+    owner  => $owner,
+    group  => $group,
+    mode   => 0755,
   }
 
   file { "logback-conf":
@@ -70,7 +76,7 @@ class play (
     owner    => "${owner}",
     group    => "${group}",
     require  => File['conf'],
-    mode     => 0550,
+    mode     => 0775,
     source   => "puppet:///modules/play/logger-conf.xml",
   }
 }
