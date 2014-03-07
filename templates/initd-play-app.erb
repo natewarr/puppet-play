@@ -52,9 +52,9 @@ start() {
   rm -f $START_LOG
 
   if [ -r /etc/rc.d/init.d/functions ]; then
-    daemon --user $USER ${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS} 2>&1 > $START_LOG &
+    daemon --user $USER ${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS} > $START_LOG 2>&1 &
   else
-    su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS}" 2>&1 > $START_LOG &
+    su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS}" > $START_LOG 2>&1 &
   fi
 
   while true

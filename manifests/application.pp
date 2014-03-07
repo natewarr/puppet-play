@@ -56,7 +56,8 @@ define play::application(
           owner   => 'root',
           group   => 'root',
           mode    => '0755',
-          require => File["${path}/conf/${service_name}.conf",
+          require => File["${path}/apps/${app_name}-${version}",
+                          "${path}/conf/${service_name}.conf",
                           "${path}/logs/${service_name}" ],
           notify => Service[$service_name],
         }
