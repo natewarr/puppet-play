@@ -26,7 +26,6 @@ START_LOG="${RELATIVE_PATH}/logs/${SERVICE_NAME}/startup.log"
 
 # Source function library.
 . /etc/init.d/functions
-RETVAL=0
 
 start() {
   echo -n "Starting $SERVICE_NAME "
@@ -54,10 +53,8 @@ start() {
 
   if [ -r /etc/rc.d/init.d/functions ]; then
     daemon --user $USER ${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS} 2>&1 > $START_LOG &
-    RETVAL=$?
   else
     su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS}" 2>&1 > $START_LOG &
-    RETVAL=$?
   fi
 
   while true
@@ -70,7 +67,8 @@ start() {
   success
   echo
   echo $(cat $START_LOG)
-  return $RETVAL
+  status
+  return $?
 }
 
 stop() {
