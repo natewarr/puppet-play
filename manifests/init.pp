@@ -79,4 +79,12 @@ class play (
     mode     => 0775,
     source   => "puppet:///modules/play/logger-conf.xml",
   }
+
+  if $::lsbdistid == 'ubuntu' {
+    package {'unzip':
+      ensure => installed,
+    }
+  }
+
 }
+

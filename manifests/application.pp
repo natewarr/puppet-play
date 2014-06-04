@@ -16,7 +16,7 @@ define play::application(
 
   require play
   case $ensure {
-    'installed' : {
+    'installed', 'present' : {
 
       #download the application from $source
       wget::fetch { $source:
@@ -50,16 +50,34 @@ define play::application(
       }
 
       if ( $service == true ) {
-        file {"/etc/init.d/${service_name}":
-          ensure  => 'file',
-          content => template('play/initd-play-app.erb'),
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0755',
-          require => File["${path}/apps/${app_name}-${version}",
-                          "${path}/conf/${service_name}.conf",
-                          "${path}/logs/${service_name}" ],
-          notify => Service[$service_name],
+        case $operatingsystem {
+          'RedHat', 'CentOS', 'Oracle': {
+            file {"/etc/init.d/${service_name}":
+              ensure  => 'file',
+              content => template('play/initd-play-app.erb'),
+              owner   => 'root',
+              group   => 'root',
+              mode    => '0755',
+              require => File["${path}/apps/${app_name}-${version}",
+                              "${path}/conf/${service_name}.conf",
+                              "${path}/logs/${service_name}" ],
+              notify => Service[$service_name],
+            }
+          }
+          'Ubuntu' : {
+
+            file {"/etc/init/${service_name}.conf":
+              ensure  => 'file',
+              content => template('play/upstart-play.erb'),
+              owner   => 'root',
+              group   => 'root',
+              mode    => '0644',
+              require => File["${path}/apps/${app_name}-${version}",
+                              "${path}/conf/${service_name}.conf",
+                              "${path}/logs/${service_name}" ],
+              notify => Service[$service_name],
+            }
+          }
         }
 
         service { $service_name :
@@ -67,7 +85,6 @@ define play::application(
           enable     => $enable,
           hasstatus  => true,
           hasrestart => true,
-          require    => File["/etc/init.d/${service_name}"],
         }
       }
     }
