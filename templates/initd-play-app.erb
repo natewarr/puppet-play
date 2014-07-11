@@ -24,16 +24,11 @@ PID_FILE="${RELATIVE_PATH}/pids/${SERVICE_NAME}.pid"
 APPLICATION_PATH="${RELATIVE_PATH}/apps/${APP_NAME}-${APP_VERSION}"
 START_LOG="${RELATIVE_PATH}/logs/${SERVICE_NAME}/startup.log"
 
-# Source function library.
-. /etc/init.d/functions
-
 start() {
   echo -n "Starting $SERVICE_NAME "
   if [ -f $PID_FILE ]; then
     read ppid < $PID_FILE
     if [ `ps --pid $ppid 2> /dev/null | grep -c $ppid 2> /dev/null` -eq '1' ]; then
-      failure
-      echo
       echo "$SERVICE_NAME is already running."
       return 1
     else
@@ -51,11 +46,7 @@ start() {
 
   rm -f $START_LOG
 
-  if [ -r /etc/rc.d/init.d/functions ]; then
-    daemon --user $USER ${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS} > $START_LOG 2>&1 &
-  else
-    su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS}" > $START_LOG 2>&1 &
-  fi
+  su - $USER -c "${APPLICATION_PATH}/bin/$APP_NAME -Dconfig.file=$CONFIG_FILE -Dlogger.file=$LOGGER_CONF_FILE -Dlogger_filename=$LOGGER_FILEPATH -Dpidfile.path=$PID_FILE -Dhttp.port=$LISTEN_PORT ${ADDL_PARAMS}" > $START_LOG 2>&1 &
 
   while true
   do
@@ -63,9 +54,6 @@ start() {
     sleep 2
   done
 
-
-  success
-  echo
   echo $(cat $START_LOG)
   status
   return $?
@@ -93,7 +81,6 @@ stop() {
   fi
 
   rm -f $PID_FILE
-  success
   echo
 }
 

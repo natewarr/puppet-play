@@ -50,34 +50,16 @@ define play::application(
       }
 
       if ( $service == true ) {
-        case $operatingsystem {
-          'RedHat', 'CentOS', 'Oracle': {
-            file {"/etc/init.d/${service_name}":
-              ensure  => 'file',
-              content => template('play/initd-play-app.erb'),
-              owner   => 'root',
-              group   => 'root',
-              mode    => '0755',
-              require => File["${path}/apps/${app_name}-${version}",
-                              "${path}/conf/${service_name}.conf",
-                              "${path}/logs/${service_name}" ],
-              notify => Service[$service_name],
-            }
-          }
-          'Ubuntu' : {
-
-            file {"/etc/init/${service_name}.conf":
-              ensure  => 'file',
-              content => template('play/upstart-play.erb'),
-              owner   => 'root',
-              group   => 'root',
-              mode    => '0644',
-              require => File["${path}/apps/${app_name}-${version}",
-                              "${path}/conf/${service_name}.conf",
-                              "${path}/logs/${service_name}" ],
-              notify => Service[$service_name],
-            }
-          }
+        file {"/etc/init.d/${service_name}":
+          ensure  => 'file',
+          content => template('play/initd-play-app.erb'),
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0755',
+          require => File["${path}/apps/${app_name}-${version}",
+                          "${path}/conf/${service_name}.conf",
+                          "${path}/logs/${service_name}" ],
+          notify => Service[$service_name],
         }
 
         service { $service_name :
