@@ -15,7 +15,7 @@ env PID_FILE=<%= @path %>/pids/<%= @service_name %>-<%= @port %>.pid
 env CONFIG=<%= @path %>/conf/<%= @service_name %>.conf
 env LOGGER_CONFIG=<%= @path %>/conf/logger-conf.xml
 env LOGFILE=<%= path %>/logs/<%= @app_name %>-<%= @port %>
-env EXTRA=<%= @exec_params %>
+env EXTRA="<%= @exec_params %>"
 
 respawn
 respawn limit 10 5
