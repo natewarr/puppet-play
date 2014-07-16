@@ -9,6 +9,7 @@ define play::application(
   $enable       = true,
   $exec_params  = '',
   $config_file  = 'puppet:///modules/play/play-default.conf',
+  $config_content = undef,
   $service_name = "play-${title}",
 )
 {
@@ -34,12 +35,23 @@ define play::application(
         ensure => 'directory',
       }
 
-      file {"${path}/conf/${service_name}.conf":
-        ensure => 'file',
-        source => $config_file,
-        owner  => 'play',
-        group  => 'play',
-        mode   => '0600',
+      if defined($config_content) {
+        file {"${path}/conf/${service_name}.conf":
+          ensure  => 'file',
+          content => $config_content,
+          owner   => 'play',
+          group   => 'play',
+          mode    => '0600',
+        }
+      }
+      else {
+        file {"${path}/conf/${service_name}.conf":
+          ensure => 'file',
+          source => $config_file,
+          owner  => 'play',
+          group  => 'play',
+          mode   => '0600',
+        }
       }
 
       file {"${path}/logs/${service_name}" :
