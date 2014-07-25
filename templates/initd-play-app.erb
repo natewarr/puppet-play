@@ -64,8 +64,8 @@ stop() {
 
   if [ -f $PID_FILE ]; then
     read kpid < $PID_FILE
-    let kwait=30
-    let count=0
+    kwait=30
+    count=0
     # Try issuing SIGTERM
 
     kill -15 $kpid
