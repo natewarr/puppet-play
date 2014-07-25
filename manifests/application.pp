@@ -35,7 +35,7 @@ define play::application(
         ensure => 'directory',
       }
 
-      if defined($config_content) {
+      if is_string($config_content) {
         file {"${path}/conf/${service_name}.conf":
           ensure  => 'file',
           content => $config_content,
