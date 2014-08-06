@@ -50,7 +50,7 @@ start() {
 
   while true
   do
-    [ -f $START_LOG ] && break
+    [ -f $START_LOG ] && [ -f $PID_FILE ] && break
     sleep 2
   done
 
@@ -72,7 +72,7 @@ stop() {
     until [ `ps --pid $kpid 2> /dev/null | grep -c $kpid 2> /dev/null` -eq '0' ] || [ $count -gt $kwait ]
     do
       sleep 1
-      let count=$count+1;
+      count=$count+1;
     done
 
     if [ $count -gt $kwait ]; then
