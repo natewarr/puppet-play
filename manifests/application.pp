@@ -42,6 +42,7 @@ define play::application(
           owner   => 'play',
           group   => 'play',
           mode    => '0600',
+          notify => Service[$service_name],
         }
       }
       else {
@@ -51,6 +52,7 @@ define play::application(
           owner  => 'play',
           group  => 'play',
           mode   => '0600',
+          notify => Service[$service_name],
         }
       }
 
