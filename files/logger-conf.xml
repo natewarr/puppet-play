@@ -1,7 +1,7 @@
 <configuration>
-  
+
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
-  
+
   <property name="LOG_FILEPATH" value="${logger_filename}"/>
 
   <!-- setup the rolling file appender -->
@@ -18,10 +18,10 @@
       </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
     <encoder>
-      <pattern>%date - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
+      <pattern>%date{yyyy-MM-dd'T'HH:mm:ss.SSSz} - [%level] - from %logger in %thread %n%message%n%xException%n</pattern>
     </encoder>
   </appender>
-  
+
   <root level="ERROR">
     <appender-ref ref="FILE" />
   </root>
