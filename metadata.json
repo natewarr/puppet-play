@@ -2,7 +2,7 @@
     "name": "natewarr-play",
     "version": "0.0.2",
     "author": "Nate Warren",
-    "license": "Apache 2.0",
+    "license": "MIT",
     "summary": "puppet-play is a puppet component module to deploy play-framework applications on Linux",
     "source": "https://github.com/natewarr/puppet-play.git",
     "project_page": "https://github.com/natewarr/puppet-play",
