@@ -1,5 +1,5 @@
 class play::cleanup (
-  $cacheHistory  =  0,
+  $cacheHistory  =  2,
   $homePath      = '/opt/play'
 ) {
 
