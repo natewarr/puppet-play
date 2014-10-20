@@ -72,10 +72,10 @@ stop() {
     until [ `ps --pid $kpid 2> /dev/null | grep -c $kpid 2> /dev/null` -eq '0' ] || [ $count -gt $kwait ]
     do
       sleep 1
-      count=$count+1;
+      count=$(expr $count + 1)
     done
 
-    if [ $count -gt $kwait ]; then
+    if [ "$count" -gt "$kwait" ]; then
       kill -9 $kpid
     fi
   fi
