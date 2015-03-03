@@ -83,9 +83,12 @@ class play (
   if $::lsbdistid == 'ubuntu' {
     package {'unzip':
       ensure => installed,
+    }~>
+    exec {'apt-get update':
+      command     => '/usr/bin/apt-get update',
+      refreshonly => true,
     }
   }
 
-  anchor { 'play::start': } -> Package['unzip'] -> anchor { 'play::end': }
 }
 
