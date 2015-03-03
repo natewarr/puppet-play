@@ -86,5 +86,6 @@ class play (
     }
   }
 
+  anchor { 'play::start': } -> Package['unzip'] -> anchor { 'play::end': }
 }
 
