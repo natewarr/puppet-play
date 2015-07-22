@@ -42,7 +42,7 @@ define play::application(
           owner   => 'play',
           group   => 'play',
           mode    => '0600',
-          notify => Service[$service_name],
+          notify  => Service[$service_name],
         }
       }
       else {
@@ -73,7 +73,7 @@ define play::application(
           require => File["${path}/apps/${app_name}-${version}",
                           "${path}/conf/${service_name}.conf",
                           "${path}/logs/${service_name}" ],
-          notify => Service[$service_name],
+          notify  => Service[$service_name],
         }
 
         service { $service_name :
