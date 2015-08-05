@@ -8,6 +8,8 @@ define play::application(
   $service      = true,
   $enable       = true,
   $exec_params  = '',
+  $logback_file = 'puppet:///modules/play/logger-conf.xml',
+  $logback_config = undef,
   $config_file  = 'puppet:///modules/play/play-default.conf',
   $config_content = undef,
   $service_name = "play-${title}",
@@ -33,6 +35,29 @@ define play::application(
 
       file {"${path}/apps/${app_name}-${version}" :
         ensure => 'directory',
+      }
+
+      if is_string($logback_config) {
+        file { 'logback-conf':
+          ensure  => 'file',
+          path    => "${homepath}/conf/${service_name}-logger-conf.xml",
+          owner   => 'play',
+          group   => 'play',
+          require => File['conf'],
+          mode    => '0775',
+          content => $logback_config,
+        }
+      }
+      else {
+        file { 'logback-conf':
+          ensure  => 'file',
+          path    => "${homepath}/conf/${service_name}-logger-conf.xml",
+          owner   => 'play',
+          group   => 'play',
+          require => File['conf'],
+          mode    => '0775',
+          source => $logback_file,
+        }
       }
 
       if is_string($config_content) {

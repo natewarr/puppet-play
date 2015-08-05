@@ -11,8 +11,6 @@ class play (
   $owner = 'play',
   $group = 'play',
   $homepath = '/opt/play',
-  $logback_file = 'puppet:///modules/play/logger-conf.xml',
-  $logback_config = undef
 ) {
 
   group { $group:
@@ -72,22 +70,6 @@ class play (
     mode   => '0755',
   }
 
-  case is_string($logback_config) {
-    true:     { $set_logback_source = $logback_file }
-    default:  { $set_logback_source = undef }
-  }
-
-  file { 'logback-conf':
-    ensure  => 'file',
-    path    => "${homepath}/conf/logger-conf.xml",
-    owner   => $owner,
-    group   => $group,
-    require => File['conf'],
-    mode    => '0775',
-    source  => $set_logback_source,
-    content => $logback_config,
-  }
-
   if $::lsbdistid == 'ubuntu' {
     package {'unzip':
       ensure => installed,
@@ -99,4 +81,3 @@ class play (
   }
 
 }
-
