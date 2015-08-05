@@ -9,7 +9,7 @@ define play::application(
   $enable       = true,
   $exec_params  = '',
   $logback_file = 'puppet:///modules/play/logger-conf.xml',
-  $logback_config = undef,
+  $logback_content = undef,
   $config_file  = 'puppet:///modules/play/play-default.conf',
   $config_content = undef,
   $service_name = "play-${title}",
@@ -37,30 +37,28 @@ define play::application(
         ensure => 'directory',
       }
 
-      if is_string($logback_config) {
-        file { 'logback-conf':
+      if $logback_content!=undef {
+        file { "${path}/conf/${service_name}-logger-conf.xml":
           ensure  => 'file',
-          path    => "${homepath}/conf/${service_name}-logger-conf.xml",
+          content => $logback_content,
           owner   => 'play',
           group   => 'play',
-          require => File['conf'],
           mode    => '0775',
-          content => $logback_config,
+          notify  => Service[$service_name],
         }
       }
       else {
-        file { 'logback-conf':
+        file { "${path}/conf/${service_name}-logger-conf.xml":
           ensure  => 'file',
-          path    => "${homepath}/conf/${service_name}-logger-conf.xml",
+          source  => $logback_file,
           owner   => 'play',
           group   => 'play',
-          require => File['conf'],
           mode    => '0775',
-          source => $logback_file,
+          notify  => Service[$service_name],
         }
       }
 
-      if is_string($config_content) {
+      if $config_content!=undef {
         file {"${path}/conf/${service_name}.conf":
           ensure  => 'file',
           content => $config_content,
@@ -97,6 +95,7 @@ define play::application(
           mode    => '0755',
           require => File["${path}/apps/${app_name}-${version}",
                           "${path}/conf/${service_name}.conf",
+                          "${path}/conf/${service_name}-logger-conf.xml",
                           "${path}/logs/${service_name}" ],
           notify  => Service[$service_name],
         }
