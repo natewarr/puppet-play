@@ -1,6 +1,6 @@
 {
     "name": "natewarr-play",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "author": "Nate Warren",
     "license": "MIT",
     "summary": "puppet-play is a puppet component module to deploy play-framework applications on Linux",
